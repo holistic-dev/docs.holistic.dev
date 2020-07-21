@@ -57,6 +57,71 @@ All responses are JSON-based and follow one of these formats:
 
 Http codes and error message you can find at **Errors** section
 
+## Projects
+
+The project represents one database. Each project has a **name** and database **type**. Each project can contain **multiple environments** \(development, test, stage, production\) and various version control system **branches**.
+
+{% hint style="warning" %}
+**Multiple environment** and **multiple branches** will be avalible soon.
+{% endhint %}
+
+### Create project
+
+{% api-method method="post" host="https://api.holistic.dev/api/v1/" path="project" %}
+{% api-method-summary %}
+project
+{% endapi-method-summary %}
+
+{% api-method-description %}
+Create new project
+{% endapi-method-description %}
+
+{% api-method-spec %}
+{% api-method-request %}
+{% api-method-body-parameters %}
+{% api-method-parameter name="project.name" type="string" required=true %}
+project name \(case insensitive\)
+{% endapi-method-parameter %}
+
+{% api-method-parameter name="project.db" type="string" required=true %}
+"pg" only
+{% endapi-method-parameter %}
+{% endapi-method-body-parameters %}
+{% endapi-method-request %}
+
+{% api-method-response %}
+{% api-method-response-example httpCode=200 %}
+{% api-method-response-example-description %}
+**project.uuid** - unique project identifier
+{% endapi-method-response-example-description %}
+
+```
+{
+  "status": "OK",
+  "data": {
+    "project": {
+      "date": "2020-01-01T00:00:00.000Z",
+      "name": "project name",
+      "uuid": "00000000-0000-0000-0000-000000000000"
+    }
+  }
+}
+```
+{% endapi-method-response-example %}
+{% endapi-method-response %}
+{% endapi-method-spec %}
+{% endapi-method %}
+
+### Rename project
+
+### List projects
+
+### Project details
+
+### Project DDL details
+
+### Project DML list
+
 ## DDL
 
 DDL, aka Data Definition Language, is an SQL subset that includes **CREATE**, **ALTER**, and **DROP** statements. It uses to define database structure. Also, can include DML statements with extension's commands like **create\_hypertable\(\)** from [**TimescaleDB**](https://docs.timescale.com/latest/api#create_hypertable). All supported extensions you can find in the [**extensions list**](extensions.md)**.**  
