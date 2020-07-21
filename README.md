@@ -4,7 +4,11 @@ description: >-
   and uses standard HTTP response codes.
 ---
 
-# API Reference
+# API Reference \(beta\)
+
+{% hint style="danger" %}
+The current **API** status is **BETA**. Minor changes are possible before leaving this status. After fixing the state, JSON-schemas will be published, with a description of the formats of requests and responses
+{% endhint %}
 
 ## Authentication
 

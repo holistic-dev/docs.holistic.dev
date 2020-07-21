@@ -1,5 +1,5 @@
 # Table of contents
 
-* [API Reference](README.md)
+* [API Reference \(beta\)](README.md)
 * [Extensions](extensions.md)
 
