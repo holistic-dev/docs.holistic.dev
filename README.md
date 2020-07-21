@@ -218,7 +218,7 @@ project
 {% endapi-method-summary %}
 
 {% api-method-description %}
-Get project details
+Get projects list
 {% endapi-method-description %}
 
 {% api-method-spec %}
