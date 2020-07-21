@@ -78,6 +78,12 @@ Create new project
 
 {% api-method-spec %}
 {% api-method-request %}
+{% api-method-headers %}
+{% api-method-parameter name="x-api-key" type="string" required=true %}
+your api key
+{% endapi-method-parameter %}
+{% endapi-method-headers %}
+
 {% api-method-body-parameters %}
 {% api-method-parameter name="project.name" type="string" required=true %}
 project name \(case insensitive\)
@@ -151,6 +157,12 @@ Create new project
 
 {% api-method-spec %}
 {% api-method-request %}
+{% api-method-headers %}
+{% api-method-parameter name="x-api-key" type="string" required=true %}
+your api key
+{% endapi-method-parameter %}
+{% endapi-method-headers %}
+
 {% api-method-body-parameters %}
 {% api-method-parameter name="project.name" type="string" required=true %}
 project new name \(case insensitive\)
@@ -223,6 +235,12 @@ Get projects list
 
 {% api-method-spec %}
 {% api-method-request %}
+{% api-method-headers %}
+{% api-method-parameter name="x-api-key" type="string" required=true %}
+your api key
+{% endapi-method-parameter %}
+{% endapi-method-headers %}
+{% endapi-method-request %}
 
 {% api-method-response %}
 {% api-method-response-example httpCode=200 %}
@@ -276,30 +294,80 @@ Get projects list
 **Example:**
 
 {% tabs %}
-{% tab title="JSON" %}
-```javascript
-{
-	"project": {
-		"name": "project name",
-		"uuid": "00000000-0000-0000-0000-000000000000"
-	}
-}
-```
-{% endtab %}
-
 {% tab title="Bash" %}
 ```bash
-HOLISTICDEV_API_KEY="<your-api-key>" HOLISTICDEV_PROJECT_NAME="<project-name>"; \
-echo "{\"project\":{\"name\":\"$HOLISTICDEV_PROJECT_NAME\",\"db\":\"pg\"}}" | \
+HOLISTICDEV_API_KEY="<your-api-key>"; \
 curl \
   --header "x-api-key: $HOLISTICDEV_API_KEY" \
   --header "Content-Type: application/json" \
-  --request PATCH --data @- https:
+   --request GET https://api.holistic.dev/api/v1/project/
 ```
 {% endtab %}
 {% endtabs %}
 
 ### Project details
+
+{% api-method method="get" host="https://api.holistic.dev/api/v1/" path="project/:uuid/details" %}
+{% api-method-summary %}
+project
+{% endapi-method-summary %}
+
+{% api-method-description %}
+Get projects list
+{% endapi-method-description %}
+
+{% api-method-spec %}
+{% api-method-request %}
+{% api-method-headers %}
+{% api-method-parameter name="x-api-key" type="string" required=true %}
+your api key
+{% endapi-method-parameter %}
+{% endapi-method-headers %}
+
+{% api-method-query-parameters %}
+{% api-method-parameter name="uuid" type="string" required=true %}
+project uuid
+{% endapi-method-parameter %}
+{% endapi-method-query-parameters %}
+{% endapi-method-request %}
+
+{% api-method-response %}
+{% api-method-response-example httpCode=200 %}
+{% api-method-response-example-description %}
+\*\*\*\*
+{% endapi-method-response-example-description %}
+
+```
+{
+    "data": {
+        "project": {
+            "date": "2020-01-01T00:00:00.000Z",
+            "db": "pg",
+            "name": "default",
+            "uuid": "00000000-0000-0000-0000-000000000000"
+        }
+    },
+    "status": "OK"
+}
+```
+{% endapi-method-response-example %}
+{% endapi-method-response %}
+{% endapi-method-spec %}
+{% endapi-method %}
+
+**Example:**
+
+{% tabs %}
+{% tab title="Bash" %}
+```bash
+HOLISTICDEV_API_KEY="<your-api-key>" HOLISTICDEV_PROJECT_UUID="<project-uuid>"; \
+curl \
+  --header "x-api-key: $HOLISTICDEV_API_KEY" \
+  --header "Content-Type: application/json" \
+  --request GET "https://api.holistic.dev/api/v1/project/$HOLISTICDEV_PROJECT_UUID/details"
+```
+{% endtab %}
+{% endtabs %}
 
 ### Project DDL details
 
