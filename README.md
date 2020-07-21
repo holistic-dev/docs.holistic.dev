@@ -371,7 +371,159 @@ curl \
 
 ### Project DDL details
 
+{% api-method method="get" host="https://api.holistic.dev/api/v1/" path="project/:uuid/ddl" %}
+{% api-method-summary %}
+project
+{% endapi-method-summary %}
+
+{% api-method-description %}
+Get projects list
+{% endapi-method-description %}
+
+{% api-method-spec %}
+{% api-method-request %}
+{% api-method-headers %}
+{% api-method-parameter name="x-api-key" type="string" required=true %}
+your api key
+{% endapi-method-parameter %}
+{% endapi-method-headers %}
+
+{% api-method-query-parameters %}
+{% api-method-parameter name="uuid" type="string" required=true %}
+project uuid
+{% endapi-method-parameter %}
+{% endapi-method-query-parameters %}
+{% endapi-method-request %}
+
+{% api-method-response %}
+{% api-method-response-example httpCode=200 %}
+{% api-method-response-example-description %}
+\*\*\*\*
+{% endapi-method-response-example-description %}
+
+```
+{
+    "data": {
+        "ddl": {
+            "ast": {
+                "elements": {
+                    "comment": 62,
+                    "parsed": 31
+                },
+                "errors": 0
+            },
+            "check": {
+                "status": "finished"
+            },
+            "compiled": {
+                "functions": 0,
+                "operators": 0,
+                "relations": 12,
+                "schemas": 0,
+                "types": 0
+            },
+            "date": "2020-01-01T00:00:00.000Z",
+            "files": 2,
+            "issues": 37,
+            "uuid": "00000000-0000-0000-0000-000000000000",
+            "version": null
+        }
+    },
+    "status": "OK"
+}
+```
+{% endapi-method-response-example %}
+{% endapi-method-response %}
+{% endapi-method-spec %}
+{% endapi-method %}
+
+**Example:**
+
+{% tabs %}
+{% tab title="Bash" %}
+```bash
+HOLISTICDEV_API_KEY="<your-api-key>" HOLISTICDEV_PROJECT_UUID="<project-uuid>"; \
+curl \
+  --header "x-api-key: $HOLISTICDEV_API_KEY" \
+  --header "Content-Type: application/json" \
+  --request GET "https://api.holistic.dev/api/v1/project/$HOLISTICDEV_PROJECT_UUID/ddl"
+```
+{% endtab %}
+{% endtabs %}
+
 ### Project DMLs list
+
+{% api-method method="get" host="https://api.holistic.dev/api/v1/" path="project/:uuid/dml/list" %}
+{% api-method-summary %}
+project
+{% endapi-method-summary %}
+
+{% api-method-description %}
+Get projects list
+{% endapi-method-description %}
+
+{% api-method-spec %}
+{% api-method-request %}
+{% api-method-headers %}
+{% api-method-parameter name="x-api-key" type="string" required=true %}
+your api key
+{% endapi-method-parameter %}
+{% endapi-method-headers %}
+
+{% api-method-query-parameters %}
+{% api-method-parameter name="uuid" type="string" required=true %}
+project uuid
+{% endapi-method-parameter %}
+{% endapi-method-query-parameters %}
+{% endapi-method-request %}
+
+{% api-method-response %}
+{% api-method-response-example httpCode=200 %}
+{% api-method-response-example-description %}
+\*\*\*\*
+{% endapi-method-response-example-description %}
+
+```
+{
+    "data": [
+        {
+            "dml": {
+                "check": {
+                    "status": "finished"
+                },
+                "date": "booking-info.sql",
+                "issues": 0,
+                "name": "sql-name",
+                "source": {
+                    "from": "api",
+                    "sql": "SELECT   \n  b.book_ref,\n  t.ticket_no,\n  t.passenger_id,\n  t.passenger_name,\n  tf.fare_conditions,\n  tf.amount,\n  f.scheduled_departure_local,\n  f.scheduled_arrival_local,\n  f.departure_city || '(' || f.departure_airport || ')' as departure,\n  f.arrival_city || '(' || f.arrival_airport || ')' as arrival,\n  f.status,\n  bp.seat_no\nFROM\n  bookings b\n  JOIN tickets t ON b.book_ref = t.book_ref\n  JOIN ticket_flights tf ON tf.ticket_no = t.ticket_no\n  JOIN flights_v f ON tf.flight_id = f.flight_id\n  LEFT JOIN boarding_passes bp ON tf.flight_id = bp.flight_id AND tf.ticket_no = bp.ticket_no\nWHERE\n  b.book_ref = '_QWE12'\nORDER BY\n  t.ticket_no,\n  f.scheduled_departure"
+                },
+                "uuid": "00000000-0000-0000-0000-000000000000",
+                "version": null
+            }
+        }
+    ],
+    "status": "OK"
+}
+```
+{% endapi-method-response-example %}
+{% endapi-method-response %}
+{% endapi-method-spec %}
+{% endapi-method %}
+
+**Example:**
+
+{% tabs %}
+{% tab title="Bash" %}
+```bash
+HOLISTICDEV_API_KEY="<your-api-key>" HOLISTICDEV_PROJECT_UUID="<project-uuid>"; \
+curl \
+  --header "x-api-key: $HOLISTICDEV_API_KEY" \
+  --header "Content-Type: application/json" \
+  --request GET "https://api.holistic.dev/api/v1/project/$HOLISTICDEV_PROJECT_UUID/dml/list"
+```
+{% endtab %}
+{% endtabs %}
 
 ## DDL
 
