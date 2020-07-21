@@ -112,7 +112,103 @@ project name \(case insensitive\)
 {% endapi-method-spec %}
 {% endapi-method %}
 
+**Example:**
+
+{% tabs %}
+{% tab title="JSON" %}
+```javascript
+{
+	"project": {
+		"name": "project name",
+		"db": "pg"
+	}
+}
+```
+{% endtab %}
+
+{% tab title="Bash" %}
+```bash
+HOLISTICDEV_API_KEY="<your-api-key>" HOLISTICDEV_PROJECT_NAME="<project-name>"; \
+echo "{\"project\":{\"name\":\"$HOLISTICDEV_PROJECT_NAME\",\"db\":\"pg\"}}" | \
+curl \
+  --header "x-api-key: $HOLISTICDEV_API_KEY" \
+  --header "Content-Type: application/json" \
+  --request POST --data @- https://api.holistic.dev/api/v1/project/
+```
+{% endtab %}
+{% endtabs %}
+
 ### Rename project
+
+{% api-method method="patch" host="https://api.holistic.dev/api/v1/" path="project" %}
+{% api-method-summary %}
+project
+{% endapi-method-summary %}
+
+{% api-method-description %}
+Create new project
+{% endapi-method-description %}
+
+{% api-method-spec %}
+{% api-method-request %}
+{% api-method-body-parameters %}
+{% api-method-parameter name="project.name" type="string" required=true %}
+project new name \(case insensitive\)
+{% endapi-method-parameter %}
+
+{% api-method-parameter name="project.uuid" type="string" required=true %}
+existing project UUID
+{% endapi-method-parameter %}
+{% endapi-method-body-parameters %}
+{% endapi-method-request %}
+
+{% api-method-response %}
+{% api-method-response-example httpCode=200 %}
+{% api-method-response-example-description %}
+**project.name** - project new name
+{% endapi-method-response-example-description %}
+
+```
+{
+  "status": "OK",
+  "data": {
+    "project": {
+      "name": "project name",
+      "uuid": "00000000-0000-0000-0000-000000000000"
+    }
+  }
+}
+```
+{% endapi-method-response-example %}
+{% endapi-method-response %}
+{% endapi-method-spec %}
+{% endapi-method %}
+
+**Example:**
+
+{% tabs %}
+{% tab title="JSON" %}
+```javascript
+{
+	"project": {
+		"name": "project name",
+		"uuid": "00000000-0000-0000-0000-000000000000"
+	}
+}
+```
+{% endtab %}
+
+{% tab title="Bash" %}
+```bash
+HOLISTICDEV_API_KEY="<your-api-key>" HOLISTICDEV_PROJECT_NAME="<project-name>"; \
+echo "{\"project\":{\"name\":\"$HOLISTICDEV_PROJECT_NAME\",\"db\":\"pg\"}}" | \
+curl \
+  --header "x-api-key: $HOLISTICDEV_API_KEY" \
+  --header "Content-Type: application/json" \
+  --request PATCH --data @- https://api.holistic.dev/api/v1/project/
+```
+{% endtab %}
+{% endtabs %}
 
 ### List projects
 
@@ -243,7 +339,7 @@ array of objects
 ```bash
 HOLISTICDEV_API_KEY="<your-api-key>" HOLISTICDEV_PROJECT_NAME="<project-name>"; \
 DATA=$(cat ddl.sql | base64 -w0)
-echo "{\"project\":{\"name\":\"default\"},\"ddl\":{\"version\":null},\"files\":[{\"name\":\"ddl.sql\",\"source\":\"$DATA\"}]}" | \
+echo "{\"project\":{\"name\":\"$HOLISTICDEV_PROJECT_NAME\"},\"ddl\":{\"version\":null},\"files\":[{\"name\":\"ddl.sql\",\"source\":\"$DATA\"}]}" | \
 curl \
   --header "x-api-key: $HOLISTICDEV_API_KEY" \
   --header "Content-Type: application/json" \
@@ -352,11 +448,11 @@ any string version for history navigate \(case insensitive, can be null\)
 ```bash
 HOLISTICDEV_API_KEY="<your-api-key>" HOLISTICDEV_PROJECT_NAME="<project-name>"; \
 DATA=$(cat ddl.sql | base64 -w0)
-echo "{\"project\":{\"name\":\"default\"},\"ddl\":{\"version\":null},\"dml\":{\"name\":\"dml.sql\", \"version\": null, \"source\":{ \"sql\":\"$DATA\"}}}" | \
+echo "{\"project\":{\"name\":\"$HOLISTICDEV_PROJECT_NAME\"},\"ddl\":{\"version\":null},\"dml\":{\"name\":\"dml.sql\", \"version\": null, \"source\":{ \"sql\":\"$DATA\"}}}" | \
 curl \
   --header "x-api-key: $HOLISTICDEV_API_KEY" \
   --header "Content-Type: application/json" \
-  --request POST --data @- https://api.holistic.dev/api/v1/ddl/
+  --request POST --data @- https://api.holistic.dev/api/v1/dml/
 ```
 {% endtab %}
 {% endtabs %}
