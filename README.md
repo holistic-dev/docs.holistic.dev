@@ -212,11 +212,98 @@ curl \
 
 ### List projects
 
+{% api-method method="get" host="https://api.holistic.dev/api/v1/" path="project" %}
+{% api-method-summary %}
+project
+{% endapi-method-summary %}
+
+{% api-method-description %}
+Get project details
+{% endapi-method-description %}
+
+{% api-method-spec %}
+{% api-method-request %}
+
+{% api-method-response %}
+{% api-method-response-example httpCode=200 %}
+{% api-method-response-example-description %}
+\*\*\*\*
+{% endapi-method-response-example-description %}
+
+```
+{
+    "data": [
+        {
+            "ddl": {
+                "ast": {
+                    "elements": {
+                        "comment": 62,
+                        "parsed": 31
+                    },
+                    "errors": 0
+                },
+                "compiled": {
+                    "functions": 0,
+                    "operators": 0,
+                    "relations": 12,
+                    "schemas": 0,
+                    "types": 0
+                },
+                "date": "2020-01-01T00:00:00.000Z",
+                "files": 2,
+                "issues": 0,
+                "uuid": "00000000-0000-0000-0000-000000000000"
+            },
+            "dml": {
+                "count": 1
+            },
+            "project": {
+                "date": "2020-01-01T00:00:00.000Z",
+                "db": "pg",
+                "name": "default",
+                "uuid": "00000000-0000-0000-0000-000000000000"
+            }
+        }
+    ],
+    "status": "OK"
+}
+```
+{% endapi-method-response-example %}
+{% endapi-method-response %}
+{% endapi-method-spec %}
+{% endapi-method %}
+
+**Example:**
+
+{% tabs %}
+{% tab title="JSON" %}
+```javascript
+{
+	"project": {
+		"name": "project name",
+		"uuid": "00000000-0000-0000-0000-000000000000"
+	}
+}
+```
+{% endtab %}
+
+{% tab title="Bash" %}
+```bash
+HOLISTICDEV_API_KEY="<your-api-key>" HOLISTICDEV_PROJECT_NAME="<project-name>"; \
+echo "{\"project\":{\"name\":\"$HOLISTICDEV_PROJECT_NAME\",\"db\":\"pg\"}}" | \
+curl \
+  --header "x-api-key: $HOLISTICDEV_API_KEY" \
+  --header "Content-Type: application/json" \
+  --request PATCH --data @- https:
+```
+{% endtab %}
+{% endtabs %}
+
 ### Project details
 
 ### Project DDL details
 
-### Project DML list
+### Project DMLs list
 
 ## DDL
 
