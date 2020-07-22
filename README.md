@@ -313,7 +313,7 @@ curl \
 
 {% api-method method="get" host="https://api.holistic.dev/api/v1/" path="project/:uuid/details" %}
 {% api-method-summary %}
-project
+project/:uuid/details
 {% endapi-method-summary %}
 
 {% api-method-description %}
@@ -377,7 +377,7 @@ curl \
 
 {% api-method method="get" host="https://api.holistic.dev/api/v1/" path="project/:uuid/ddl" %}
 {% api-method-summary %}
-project
+project/:uuid/ddl
 {% endapi-method-summary %}
 
 {% api-method-description %}
@@ -459,7 +459,7 @@ curl \
 
 {% api-method method="get" host="https://api.holistic.dev/api/v1/" path="project/:uuid/dml/list" %}
 {% api-method-summary %}
-project
+project/:uuid/dml/list
 {% endapi-method-summary %}
 
 {% api-method-description %}
@@ -579,9 +579,15 @@ Upload brand new ddl or replace existing ddl with new version
 
 {% api-method-spec %}
 {% api-method-request %}
+{% api-method-headers %}
+{% api-method-parameter name="x-api-key" type="string" required=true %}
+your api key
+{% endapi-method-parameter %}
+{% endapi-method-headers %}
+
 {% api-method-body-parameters %}
 {% api-method-parameter name="project.name" type="string" required=true %}
-prooject name \(case insensitive\)
+project name \(case insensitive\)
 {% endapi-method-parameter %}
 
 {% api-method-parameter name="ddl.version" type="string" required=true %}
@@ -688,6 +694,12 @@ Upload brand new dml or replace existing dml with new version
 
 {% api-method-spec %}
 {% api-method-request %}
+{% api-method-headers %}
+{% api-method-parameter name="x-api-key" type="string" required=true %}
+your api key
+{% endapi-method-parameter %}
+{% endapi-method-headers %}
+
 {% api-method-body-parameters %}
 {% api-method-parameter name="project.name" type="string" required=true %}
 prooject name \(case insensitive\)
@@ -811,6 +823,12 @@ Upload **pg\_stat\_statements** snapshot
 
 {% api-method-spec %}
 {% api-method-request %}
+{% api-method-headers %}
+{% api-method-parameter name="x-api-key" type="string" required=true %}
+your api key
+{% endapi-method-parameter %}
+{% endapi-method-headers %}
+
 {% api-method-body-parameters %}
 {% api-method-parameter name="pgss" type="string" required=true %}
 json string \(base64 encoded or not\)
@@ -887,6 +905,315 @@ Make sure that the **&lt;pg-username&gt;** has enough permissions to retrieve th
 {% hint style="info" %}
 Query in sample script aggregat
 {% endhint %}
+
+## Check Results
+
+After adding DDL or DML source, we try to parse and analyze it. It can take some time, especially for big DDL. Because of these reasons parsing and analyzing doing asynchronous way.   
+  
+When we ship new parser or analyzer, we rebuild all internal objects and analyze them with new rules.  
+  
+You can reach check results for the last **DDL** by **project name** or **&lt;ddl-uuid&gt;**.   
+**DML** check result can be reached only by **&lt;dml-uuid&gt;**.   
+  
+All of them have similar results format.  
+
+
+{% hint style="info" %}
+UUID point to exact DDL/DML version, not the last one.
+{% endhint %}
+
+{% api-method method="get" host="https://api.holistic.dev/api/v1/" path="ddl/:uuid/check-result/" %}
+{% api-method-summary %}
+ddl/:uuid/check-result
+{% endapi-method-summary %}
+
+{% api-method-description %}
+
+{% endapi-method-description %}
+
+{% api-method-spec %}
+{% api-method-request %}
+{% api-method-headers %}
+{% api-method-parameter name="x-api-key" type="string" required=true %}
+your api key
+{% endapi-method-parameter %}
+{% endapi-method-headers %}
+{% endapi-method-request %}
+
+{% api-method-response %}
+{% api-method-response-example httpCode=200 %}
+{% api-method-response-example-description %}
+
+{% endapi-method-response-example-description %}
+
+```
+{
+    "data": {
+        "ddl": {
+            "uuid": "00000000-0000-0000-0000-000000000000"
+        },
+        "analysis": {
+            "ddl": [
+                [
+                    {
+                        "name": "char-type",
+                        "description": "Recommended avoid to use a precision specification for CHAR type for column \"aircraft_code\" in relation \"aircrafts_data\"",
+                        "location": 1,
+                        "position": {
+                            "line": 1,
+                            "column": 1
+                        }
+                    }
+                ]
+            ],
+            "dml": [],
+            "details": [
+                {
+                    "kind": [
+                        "architect"
+                    ],
+                    "name": "char-type",
+                    "tags": [
+                        "CHAR"
+                    ],
+                    "class": "DDL",
+                    "places": [
+                        "CREATE MATERIALIZED VIEW",
+                        "CREATE TABLE"
+                    ],
+                    "complexity": {
+                        "type": "static",
+                        "level": 1,
+                        "nested": 0,
+                        "multiple": true
+                    },
+                    "description": {
+                        "template": "Recommended avoid to use a precision specification for CHAR type for column \"%columnname%\" in relation \"%relationname%\""
+                    }
+                }
+            ],
+            "config": [
+                {
+                    "char-type": "warning"
+                }
+            ],
+            "statistics": {
+                "ddl": {
+                    "kind": {
+                        "architect": 14,
+                        "error": 0,
+                        "performance": 13
+                    },
+                    "total": 25
+                },
+                "dml": {
+                    "kind": {
+                        "architect": 30,
+                        "error": 0,
+                        "performance": 21
+                    },
+                    "total": 38
+                },
+                "common": {
+                    "kind": {
+                        "architect": 7,
+                        "error": 0,
+                        "performance": 0
+                    },
+                    "total": 7
+                }
+            }
+        }
+    },
+    "status": "OK"
+}
+```
+{% endapi-method-response-example %}
+{% endapi-method-response %}
+{% endapi-method-spec %}
+{% endapi-method %}
+
+{% api-method method="get" host="https://api.holistic.dev/api/v1/" path="project/:name/ddl/check-result/" %}
+{% api-method-summary %}
+project/:name/ddl/check-result
+{% endapi-method-summary %}
+
+{% api-method-description %}
+
+{% endapi-method-description %}
+
+{% api-method-spec %}
+{% api-method-request %}
+{% api-method-headers %}
+{% api-method-parameter name="x-api-key" type="string" required=true %}
+your api key
+{% endapi-method-parameter %}
+{% endapi-method-headers %}
+{% endapi-method-request %}
+
+{% api-method-response %}
+{% api-method-response-example httpCode=200 %}
+{% api-method-response-example-description %}
+
+{% endapi-method-response-example-description %}
+
+```
+{
+    "data": {
+        "ddl": {
+            "uuid": "00000000-0000-0000-0000-000000000000"
+        },
+        "analysis": {
+            "ddl": [
+                [
+                    {
+                        "name": "char-type",
+                        "description": "Recommended avoid to use a precision specification for CHAR type for column \"aircraft_code\" in relation \"aircrafts_data\"",
+                        "location": 1,
+                        "position": {
+                            "line": 1,
+                            "column": 1
+                        }
+                    }
+                ]
+            ],
+            "dml": [],
+            "details": [
+                {
+                    "kind": [
+                        "architect"
+                    ],
+                    "name": "char-type",
+                    "tags": [
+                        "CHAR"
+                    ],
+                    "class": "DDL",
+                    "places": [
+                        "CREATE MATERIALIZED VIEW",
+                        "CREATE TABLE"
+                    ],
+                    "complexity": {
+                        "type": "static",
+                        "level": 1,
+                        "nested": 0,
+                        "multiple": true
+                    },
+                    "description": {
+                        "template": "Recommended avoid to use a precision specification for CHAR type for column \"%columnname%\" in relation \"%relationname%\""
+                    }
+                }
+            ],
+            "config": [
+                {
+                    "char-type": "warning"
+                }
+            ],
+            "statistics": {
+                "ddl": {
+                    "kind": {
+                        "architect": 14,
+                        "error": 0,
+                        "performance": 13
+                    },
+                    "total": 25
+                },
+                "dml": {
+                    "kind": {
+                        "architect": 30,
+                        "error": 0,
+                        "performance": 21
+                    },
+                    "total": 38
+                },
+                "common": {
+                    "kind": {
+                        "architect": 7,
+                        "error": 0,
+                        "performance": 0
+                    },
+                    "total": 7
+                }
+            }
+        }
+    },
+    "status": "OK"
+}
+```
+{% endapi-method-response-example %}
+{% endapi-method-response %}
+{% endapi-method-spec %}
+{% endapi-method %}
+
+{% api-method method="get" host="https://api.holistic.dev/api/v1/" path="dml/:uuid/check-result/" %}
+{% api-method-summary %}
+dml/:uuid/check-result
+{% endapi-method-summary %}
+
+{% api-method-description %}
+
+{% endapi-method-description %}
+
+{% api-method-spec %}
+{% api-method-request %}
+{% api-method-headers %}
+{% api-method-parameter name="x-api-key" type="string" required=true %}
+your api key
+{% endapi-method-parameter %}
+{% endapi-method-headers %}
+{% endapi-method-request %}
+
+{% api-method-response %}
+{% api-method-response-example httpCode=200 %}
+{% api-method-response-example-description %}
+
+{% endapi-method-response-example-description %}
+
+```
+{
+    "data": {
+        "dml": {
+            "uuid": "00000000-0000-0000-0000-000000000000"
+        },
+        "analysis": {
+            "ddl": [],
+            "dml": [],
+            "details": [],
+            "config": [],
+            "statistics": {
+                "ddl": {
+                    "kind": {
+                        "architect": 14,
+                        "error": 0,
+                        "performance": 13
+                    },
+                    "total": 25
+                },
+                "dml": {
+                    "kind": {
+                        "architect": 30,
+                        "error": 0,
+                        "performance": 21
+                    },
+                    "total": 38
+                },
+                "common": {
+                    "kind": {
+                        "architect": 7,
+                        "error": 0,
+                        "performance": 0
+                    },
+                    "total": 7
+                }
+            }
+        }
+    },
+    "status": "OK"
+}
+```
+{% endapi-method-response-example %}
+{% endapi-method-response %}
+{% endapi-method-spec %}
+{% endapi-method %}
 
 ## Errors
 
