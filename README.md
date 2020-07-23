@@ -967,31 +967,6 @@ your api key
                 ]
             ],
             "dml": [],
-            "details": [
-                {
-                    "kind": [
-                        "architect"
-                    ],
-                    "name": "char-type",
-                    "tags": [
-                        "CHAR"
-                    ],
-                    "class": "DDL",
-                    "places": [
-                        "CREATE MATERIALIZED VIEW",
-                        "CREATE TABLE"
-                    ],
-                    "complexity": {
-                        "type": "static",
-                        "level": 1,
-                        "nested": 0,
-                        "multiple": true
-                    },
-                    "description": {
-                        "template": "Recommended avoid to use a precision specification for CHAR type for column \"%columnname%\" in relation \"%relationname%\""
-                    }
-                }
-            ],
             "config": [
                 {
                     "char-type": "warning"
@@ -1078,31 +1053,6 @@ your api key
                 ]
             ],
             "dml": [],
-            "details": [
-                {
-                    "kind": [
-                        "architect"
-                    ],
-                    "name": "char-type",
-                    "tags": [
-                        "CHAR"
-                    ],
-                    "class": "DDL",
-                    "places": [
-                        "CREATE MATERIALIZED VIEW",
-                        "CREATE TABLE"
-                    ],
-                    "complexity": {
-                        "type": "static",
-                        "level": 1,
-                        "nested": 0,
-                        "multiple": true
-                    },
-                    "description": {
-                        "template": "Recommended avoid to use a precision specification for CHAR type for column \"%columnname%\" in relation \"%relationname%\""
-                    }
-                }
-            ],
             "config": [
                 {
                     "char-type": "warning"
@@ -1177,7 +1127,6 @@ your api key
         "analysis": {
             "ddl": [],
             "dml": [],
-            "details": [],
             "config": [],
             "statistics": {
                 "ddl": {
