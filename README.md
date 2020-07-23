@@ -726,14 +726,14 @@ any string version for history navigate \(case insensitive, can be null\)
 {% api-method-response %}
 {% api-method-response-example httpCode=200 %}
 {% api-method-response-example-description %}
-**ddl.uuid** - unique ddl identifier
+**dml.uuid** - unique ddl identifier
 {% endapi-method-response-example-description %}
 
 ```javascript
 {
   "status": "OK",
   "data": {
-    "ddl": {
+    "dml": {
       "uuid": "00000000-0000-0000-0000-000000000000"
     }
   }
