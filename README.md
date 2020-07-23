@@ -304,7 +304,7 @@ HOLISTICDEV_API_KEY="<your-api-key>"; \
 curl \
   --header "x-api-key: $HOLISTICDEV_API_KEY" \
   --header "Content-Type: application/json" \
-   --request GET https://api.holistic.dev/api/v1/project/
+  --request GET https://api.holistic.dev/api/v1/project/
 ```
 {% endtab %}
 {% endtabs %}
@@ -677,6 +677,89 @@ All files of the previous version will be replaced, even if their number does no
 We store the history of all schema changes for future features.
 {% endhint %}
 
+### Get DDL source
+
+{% api-method method="get" host="https://api.holistic.dev/api/v1/" path="ddl/:uuid" %}
+{% api-method-summary %}
+ddl
+{% endapi-method-summary %}
+
+{% api-method-description %}
+Get DDL source by DDL uuid
+{% endapi-method-description %}
+
+{% api-method-spec %}
+{% api-method-request %}
+{% api-method-path-parameters %}
+{% api-method-parameter name="uuid" type="string" required=true %}
+ddl uuid
+{% endapi-method-parameter %}
+{% endapi-method-path-parameters %}
+
+{% api-method-headers %}
+{% api-method-parameter name="x-api-key" type="string" required=true %}
+your api key
+{% endapi-method-parameter %}
+{% endapi-method-headers %}
+{% endapi-method-request %}
+
+{% api-method-response %}
+{% api-method-response-example httpCode=200 %}
+{% api-method-response-example-description %}
+
+{% endapi-method-response-example-description %}
+
+```javascript
+{
+    "data": {
+        "ddl": [
+            {
+                "file": {
+                    "name": "filename-1.sql",
+                    "ordernum": 0,
+                    "source": "CREATE TABLE aircrafts_data (\n    aircraft_code character(3) NOT NULL,\n    model jsonb NOT NULL,\n    range integer NOT NULL,\n    CONSTRAINT aircrafts_range_check CHECK ((range > 0))\n);\n\nCREATE VIEW aircrafts AS\n SELECT ml.aircraft_code,\n    (ml.model ->> lang()) AS model,\n    ml.range\n   FROM aircrafts_data ml;\n\n\n\nCREATE TABLE airports_data (\n    airport_code character(3) NOT NULL,\n    airport_name jsonb NOT NULL,\n    city jsonb NOT NULL,\n    coordinates point NOT NULL,\n    timezone text NOT NULL\n);\n\n\n\nCREATE VIEW airports AS\n SELECT ml.airport_code,\n    (ml.airport_name ->> lang()) AS airport_name,\n    (ml.city ->> lang()) AS city,\n    ml.coordinates,\n    ml.timezone\n   FROM airports_data ml;\n\n\n\nCREATE TABLE boarding_passes (\n    ticket_no character(13) NOT NULL,\n    flight_id integer NOT NULL,\n    boarding_no integer NOT NULL,\n    seat_no character varying(4) NOT NULL\n);"
+                },
+                "uuid": "00000000-0000-0000-0000-000000000000",
+                "version": null
+            },
+            {
+                "file": {
+                    "name": "filename-2.sql",
+                    "ordernum": 2,
+                    "source": "CREATE TABLE bookings (\n    book_ref character(6) NOT NULL,\n    book_date timestamp with time zone NOT NULL,\n    total_amount numeric(10,2) NOT NULL\n);\n\n\nCREATE TABLE flights (\n    flight_id integer NOT NULL,\n    flight_no character(6) NOT NULL,\n    scheduled_departure timestamp with time zone NOT NULL,\n    scheduled_arrival timestamp with time zone NOT NULL,\n    departure_airport character(3) NOT NULL,\n    arrival_airport character(3) NOT NULL,\n    status character varying(20) NOT NULL,\n    aircraft_code character(3) NOT NULL,\n    actual_departure timestamp with time zone,\n    actual_arrival timestamp with time zone,\n    CONSTRAINT flights_check CHECK ((scheduled_arrival > scheduled_departure)),\n    CONSTRAINT flights_check1 CHECK (((actual_arrival IS NULL) OR ((actual_departure IS NOT NULL) AND (actual_arrival IS NOT NULL) AND (actual_arrival > actual_departure)))),\n    CONSTRAINT flights_status_check CHECK (((status)::text = ANY (ARRAY[('On Time'::character varying)::text, ('Delayed'::character varying)::text, ('Departed'::character varying)::text, ('Arrived'::character varying)::text, ('Scheduled'::character varying)::text, ('Cancelled'::character varying)::text])))\n);\n\n\nCREATE VIEW flights_v AS\n SELECT f.flight_id,\n    f.flight_no,\n    f.scheduled_departure,\n    timezone(dep.timezone, f.scheduled_departure) AS scheduled_departure_local,\n    f.scheduled_arrival,\n    timezone(arr.timezone, f.scheduled_arrival) AS scheduled_arrival_local,\n    (f.scheduled_arrival - f.scheduled_departure) AS scheduled_duration,\n    f.departure_airport,\n    dep.airport_name AS departure_airport_name,\n    dep.city AS departure_city,\n    f.arrival_airport,\n    arr.airport_name AS arrival_airport_name,\n    arr.city AS arrival_city,\n    f.status,\n    f.aircraft_code,\n    f.actual_departure,\n    timezone(dep.timezone, f.actual_departure) AS actual_departure_local,\n    f.actual_arrival,\n    timezone(arr.timezone, f.actual_arrival) AS actual_arrival_local,\n    (f.actual_arrival - f.actual_departure) AS actual_duration\n   FROM flights f,\n    airports dep,\n    airports arr\n  WHERE ((f.departure_airport = dep.airport_code) AND (f.arrival_airport = arr.airport_code));\n\n\n\nCREATE VIEW routes AS\n WITH f3 AS (\n         SELECT f2.flight_no,\n            f2.departure_airport,\n            f2.arrival_airport,\n            f2.aircraft_code,\n            f2.duration,\n            array_agg(f2.days_of_week) AS days_of_week\n           FROM ( SELECT f1.flight_no,\n                    f1.departure_airport,\n                    f1.arrival_airport,\n                    f1.aircraft_code,\n                    f1.duration,\n                    f1.days_of_week\n                   FROM ( SELECT flights.flight_no,\n                            flights.departure_airport,\n                            flights.arrival_airport,\n                            flights.aircraft_code,\n                            (flights.scheduled_arrival - flights.scheduled_departure) AS duration,\n                            (to_char(flights.scheduled_departure, 'ID'::text))::integer AS days_of_week\n                           FROM flights) f1\n                  GROUP BY f1.flight_no, f1.departure_airport, f1.arrival_airport, f1.aircraft_code, f1.duration, f1.days_of_week\n                  ORDER BY f1.flight_no, f1.departure_airport, f1.arrival_airport, f1.aircraft_code, f1.duration, f1.days_of_week) f2\n          GROUP BY f2.flight_no, f2.departure_airport, f2.arrival_airport, f2.aircraft_code, f2.duration\n        )\n SELECT f3.flight_no,\n    f3.departure_airport,\n    dep.airport_name AS departure_airport_name,\n    dep.city AS departure_city,\n    f3.arrival_airport,\n    arr.airport_name AS arrival_airport_name,\n    arr.city AS arrival_city,\n    f3.aircraft_code,\n    f3.duration,\n    f3.days_of_week\n   FROM f3,\n    airports dep,\n    airports arr\n  WHERE ((f3.departure_airport = dep.airport_code) AND (f3.arrival_airport = arr.airport_code));\n\n\nCREATE TABLE seats (\n    aircraft_code character(3) NOT NULL,\n    seat_no character varying(4) NOT NULL,\n    fare_conditions character varying(10) NOT NULL,\n    CONSTRAINT seats_fare_conditions_check CHECK (((fare_conditions)::text = ANY (ARRAY[('Economy'::character varying)::text, ('Comfort'::character varying)::text, ('Business'::character varying)::text])))\n);\n\n\nCREATE TABLE ticket_flights (\n    ticket_no character(13) NOT NULL,\n    flight_id integer NOT NULL,\n    fare_conditions character varying(10) NOT NULL,\n    amount numeric(10,2) NOT NULL,\n    CONSTRAINT ticket_flights_amount_check CHECK ((amount >= (0)::numeric)),\n    CONSTRAINT ticket_flights_fare_conditions_check CHECK (((fare_conditions)::text = ANY (ARRAY[('Economy'::character varying)::text, ('Comfort'::character varying)::text, ('Business'::character varying)::text])))\n);\n\n\n\nCREATE TABLE tickets (\n    ticket_no character(13) NOT NULL,\n    book_ref character(6) NOT NULL,\n    passenger_id character varying(20) NOT NULL,\n    passenger_name text NOT NULL,\n    contact_data jsonb\n);\n\n\nALTER TABLE ONLY aircrafts_data\n    ADD CONSTRAINT aircrafts_pkey PRIMARY KEY (aircraft_code);\n\n\nALTER TABLE ONLY airports_data\n    ADD CONSTRAINT airports_data_pkey PRIMARY KEY (airport_code);\n\n\nALTER TABLE ONLY boarding_passes\n    ADD CONSTRAINT boarding_passes_flight_id_boarding_no_key UNIQUE (flight_id, boarding_no);\n\n\nALTER TABLE ONLY boarding_passes\n    ADD CONSTRAINT boarding_passes_flight_id_seat_no_key UNIQUE (flight_id, seat_no);\n\n\nALTER TABLE ONLY boarding_passes\n    ADD CONSTRAINT boarding_passes_pkey PRIMARY KEY (ticket_no, flight_id);\n\nALTER TABLE ONLY bookings\n    ADD CONSTRAINT bookings_pkey PRIMARY KEY (book_ref);\n\n\nALTER TABLE ONLY flights\n    ADD CONSTRAINT flights_flight_no_scheduled_departure_key UNIQUE (flight_no, scheduled_departure);\n\n\nALTER TABLE ONLY flights\n    ADD CONSTRAINT flights_pkey PRIMARY KEY (flight_id);\n\n\nALTER TABLE ONLY seats\n    ADD CONSTRAINT seats_pkey PRIMARY KEY (aircraft_code, seat_no);\n\n\nALTER TABLE ONLY ticket_flights\n    ADD CONSTRAINT ticket_flights_pkey PRIMARY KEY (ticket_no, flight_id);\n\n\nALTER TABLE ONLY tickets\n    ADD CONSTRAINT tickets_pkey PRIMARY KEY (ticket_no);\n\n\nALTER TABLE ONLY boarding_passes\n    ADD CONSTRAINT boarding_passes_ticket_no_fkey FOREIGN KEY (ticket_no, flight_id) REFERENCES ticket_flights(ticket_no, flight_id);\n\nALTER TABLE ONLY flights\n    ADD CONSTRAINT flights_aircraft_code_fkey FOREIGN KEY (aircraft_code) REFERENCES aircrafts_data(aircraft_code);\n\n\nALTER TABLE ONLY flights\n    ADD CONSTRAINT flights_arrival_airport_fkey FOREIGN KEY (arrival_airport) REFERENCES airports_data(airport_code);\n\n\nALTER TABLE ONLY flights\n    ADD CONSTRAINT flights_departure_airport_fkey FOREIGN KEY (departure_airport) REFERENCES airports_data(airport_code);\n\n\nALTER TABLE ONLY seats\n    ADD CONSTRAINT seats_aircraft_code_fkey FOREIGN KEY (aircraft_code) REFERENCES aircrafts_data(aircraft_code) ON DELETE CASCADE;\n\n\nALTER TABLE ONLY ticket_flights\n    ADD CONSTRAINT ticket_flights_flight_id_fkey FOREIGN KEY (flight_id) REFERENCES flights(flight_id);\n\n\nALTER TABLE ONLY ticket_flights\n    ADD CONSTRAINT ticket_flights_ticket_no_fkey FOREIGN KEY (ticket_no) REFERENCES tickets(ticket_no);\n\n\n\nALTER TABLE ONLY tickets\n    ADD CONSTRAINT tickets_book_ref_fkey FOREIGN KEY (book_ref) REFERENCES bookings(book_ref);"
+
+                },
+                "uuid": "00000000-0000-0000-0000-000000000000",
+                "version": null
+            }
+        ],
+        "project": {
+            "name": "default",
+            "uuid": "00000000-0000-0000-0000-000000000000"
+        }
+    },
+    "status": "OK"
+}
+```
+{% endapi-method-response-example %}
+{% endapi-method-response %}
+{% endapi-method-spec %}
+{% endapi-method %}
+
+**Example:**
+
+{% tabs %}
+{% tab title="Bash" %}
+```bash
+HOLISTICDEV_API_KEY="<your-api-key>" HOLISTICDEV_DDL_UUID="<ddl-uuid>"; \
+curl \
+  --header "x-api-key: $HOLISTICDEV_API_KEY" \
+  --header "Content-Type: application/json" \
+  --request GET "https://api.holistic.dev/api/v1/ddl/$HOLISTICDEV_DDL_UUID"
+```
+{% endtab %}
+{% endtabs %}
+
 ## DML
 
 DML, aka Data Manipulation Language, is an SQL subset that includes **SELECT**, **INSERT**, **UPDATE**, and **DELETE** statements.
@@ -787,6 +870,77 @@ base64 argument -w0 need to prevent formatting result at Linux-based os
 {% hint style="info" %}
 We store the history of all schema changes for future features.
 {% endhint %}
+
+### Get DML source
+
+{% api-method method="get" host="https://api.holistic.dev/api/v1/" path="dml/:uuid" %}
+{% api-method-summary %}
+dml
+{% endapi-method-summary %}
+
+{% api-method-description %}
+Get DML source by DML uuid
+{% endapi-method-description %}
+
+{% api-method-spec %}
+{% api-method-request %}
+{% api-method-path-parameters %}
+{% api-method-parameter name="uuid" type="string" required=true %}
+dml uuid
+{% endapi-method-parameter %}
+{% endapi-method-path-parameters %}
+
+{% api-method-headers %}
+{% api-method-parameter name="x-api-key" type="string" required=true %}
+your api key
+{% endapi-method-parameter %}
+{% endapi-method-headers %}
+{% endapi-method-request %}
+
+{% api-method-response %}
+{% api-method-response-example httpCode=200 %}
+{% api-method-response-example-description %}
+
+{% endapi-method-response-example-description %}
+
+```javascript
+{
+    "data": {
+        "dml": {
+            "name": "booking-info.sql",
+            "source": {
+                "from": "api",
+                "sql": "SELECT   \n  b.book_ref,\n  t.ticket_no,\n  t.passenger_id,\n  t.passenger_name,\n  tf.fare_conditions,\n  tf.amount,\n  f.scheduled_departure_local,\n  f.scheduled_arrival_local,\n  f.departure_city || '(' || f.departure_airport || ')' as departure,\n  f.arrival_city || '(' || f.arrival_airport || ')' as arrival,\n  f.status,\n  bp.seat_no\nFROM\n  bookings b\n  JOIN tickets t ON b.book_ref = t.book_ref\n  JOIN ticket_flights tf ON tf.ticket_no = t.ticket_no\n  JOIN flights_v f ON tf.flight_id = f.flight_id\n  LEFT JOIN boarding_passes bp ON tf.flight_id = bp.flight_id AND tf.ticket_no = bp.ticket_no\nWHERE\n  b.book_ref = '_QWE12'\nORDER BY\n  t.ticket_no,\n  f.scheduled_departure"
+            },
+            "uuid": "00000000-0000-0000-0000-000000000000",
+            "version": null
+        },
+        "project": {
+            "name": "default",
+            "uuid": "00000000-0000-0000-0000-000000000000"
+        }
+    },
+    "status": "OK"
+}
+```
+{% endapi-method-response-example %}
+{% endapi-method-response %}
+{% endapi-method-spec %}
+{% endapi-method %}
+
+**Example:**
+
+{% tabs %}
+{% tab title="Bash" %}
+```bash
+HOLISTICDEV_API_KEY="<your-api-key>" HOLISTICDEV_DML_UUID="<dml-uuid>"; \
+curl \
+  --header "x-api-key: $HOLISTICDEV_API_KEY" \
+  --header "Content-Type: application/json" \
+  --request GET "https://api.holistic.dev/api/v1/dml/$HOLISTICDEV_DML_UUID"
+```
+{% endtab %}
+{% endtabs %}
 
 ## pg\_stat\_statements
 
