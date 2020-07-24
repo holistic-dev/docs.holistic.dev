@@ -322,17 +322,17 @@ Get projects list
 
 {% api-method-spec %}
 {% api-method-request %}
+{% api-method-path-parameters %}
+{% api-method-parameter name="uuid" type="string" required=true %}
+project uuid
+{% endapi-method-parameter %}
+{% endapi-method-path-parameters %}
+
 {% api-method-headers %}
 {% api-method-parameter name="x-api-key" type="string" required=true %}
 your api key
 {% endapi-method-parameter %}
 {% endapi-method-headers %}
-
-{% api-method-query-parameters %}
-{% api-method-parameter name="uuid" type="string" required=true %}
-project uuid
-{% endapi-method-parameter %}
-{% endapi-method-query-parameters %}
 {% endapi-method-request %}
 
 {% api-method-response %}
@@ -386,17 +386,17 @@ Get projects list
 
 {% api-method-spec %}
 {% api-method-request %}
+{% api-method-path-parameters %}
+{% api-method-parameter name="uuid" type="string" required=true %}
+project uuid
+{% endapi-method-parameter %}
+{% endapi-method-path-parameters %}
+
 {% api-method-headers %}
 {% api-method-parameter name="x-api-key" type="string" required=true %}
 your api key
 {% endapi-method-parameter %}
 {% endapi-method-headers %}
-
-{% api-method-query-parameters %}
-{% api-method-parameter name="uuid" type="string" required=true %}
-project uuid
-{% endapi-method-parameter %}
-{% endapi-method-query-parameters %}
 {% endapi-method-request %}
 
 {% api-method-response %}
@@ -468,17 +468,17 @@ Get projects list
 
 {% api-method-spec %}
 {% api-method-request %}
+{% api-method-path-parameters %}
+{% api-method-parameter name="uuid" type="string" required=true %}
+project uuid
+{% endapi-method-parameter %}
+{% endapi-method-path-parameters %}
+
 {% api-method-headers %}
 {% api-method-parameter name="x-api-key" type="string" required=true %}
 your api key
 {% endapi-method-parameter %}
 {% endapi-method-headers %}
-
-{% api-method-query-parameters %}
-{% api-method-parameter name="uuid" type="string" required=true %}
-project uuid
-{% endapi-method-parameter %}
-{% endapi-method-query-parameters %}
 {% endapi-method-request %}
 
 {% api-method-response %}
@@ -1066,7 +1066,7 @@ After adding DDL or DML source, we try to parse and analyze it. It can take some
   
 When we ship new parser or analyzer, we rebuild all internal objects and analyze them with new rules.  
   
-You can reach check results for the last **DDL** by **project name** or **&lt;ddl-uuid&gt;**.   
+You can reach check results for the last **DDL** by **&lt;project-uuid&gt;** or **&lt;ddl-uuid&gt;**.   
 **DML** check result can be reached only by **&lt;dml-uuid&gt;**.   
   
 All of them have similar results format.  
@@ -1087,6 +1087,12 @@ ddl/:uuid/check-result
 
 {% api-method-spec %}
 {% api-method-request %}
+{% api-method-path-parameters %}
+{% api-method-parameter name="uuid" type="string" required=true %}
+ddl uuid
+{% endapi-method-parameter %}
+{% endapi-method-path-parameters %}
+
 {% api-method-headers %}
 {% api-method-parameter name="x-api-key" type="string" required=true %}
 your api key
@@ -1162,9 +1168,9 @@ your api key
 {% endapi-method-spec %}
 {% endapi-method %}
 
-{% api-method method="get" host="https://api.holistic.dev/api/v1/" path="project/:name/ddl/check-result/" %}
+{% api-method method="get" host="https://api.holistic.dev/api/v1/" path="project/:uuid/ddl/check-result/" %}
 {% api-method-summary %}
-project/:name/ddl/check-result
+project/:uuid/ddl/check-result
 {% endapi-method-summary %}
 
 {% api-method-description %}
@@ -1173,6 +1179,12 @@ project/:name/ddl/check-result
 
 {% api-method-spec %}
 {% api-method-request %}
+{% api-method-path-parameters %}
+{% api-method-parameter name="uuid" type="string" required=true %}
+project uuid
+{% endapi-method-parameter %}
+{% endapi-method-path-parameters %}
+
 {% api-method-headers %}
 {% api-method-parameter name="x-api-key" type="string" required=true %}
 your api key
@@ -1259,6 +1271,12 @@ dml/:uuid/check-result
 
 {% api-method-spec %}
 {% api-method-request %}
+{% api-method-path-parameters %}
+{% api-method-parameter name="uuid" type="string" required=true %}
+dml uuid
+{% endapi-method-parameter %}
+{% endapi-method-path-parameters %}
+
 {% api-method-headers %}
 {% api-method-parameter name="x-api-key" type="string" required=true %}
 your api key
