@@ -284,6 +284,12 @@ your api key
                 "db": "pg",
                 "name": "default",
                 "uuid": "00000000-0000-0000-0000-000000000000"
+            },
+            "users": {
+                "owner": "info@holistic.dev",
+                "shared": [
+                    "support@holistic.dev"
+                ]
             }
         }
     ],
@@ -349,6 +355,12 @@ your api key
             "db": "pg",
             "name": "default",
             "uuid": "00000000-0000-0000-0000-000000000000"
+        },
+        "users": {
+            "owner": "info@holistic.dev",
+            "shared": [
+                "support@holistic.dev"
+            ]
         }
     },
     "status": "OK"
