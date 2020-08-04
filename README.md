@@ -541,6 +541,31 @@ curl \
 {% endtab %}
 {% endtabs %}
 
+## SQL Syntax 
+
+At this time, holistic.dev **support only PostgreSQL** syntax. We have implemented the last original parser from **PostgreSQL 13**. So, we support modernist PostgreSQL features.  
+PostgreSQL's syntax includes all standard SQL syntax, so, quite possibly, you can parse queries written for other RDBMS - Mysql, MSSQL, ORACLE, and more. But all analyzer rules aim to find specific PostgreSQL behavior.
+
+**DDL can contain** multiple files. Each of them can include a lot of DDL statements. All unknown or syntactically incorrect statements will be ignored.
+
+**DML can contain** only one DML statement. All other statements will be ignored. DML can contain one of the following parameter syntaxes:
+
+```sql
+-- SUPPORTED:
+SELECT $1, ${obj.name} , $/obj.name/, $[obj.name], $(obj.name)
+```
+
+{% hint style="danger" %}
+**Warning!** 
+
+Parameter as question mark not supported! 
+{% endhint %}
+
+```sql
+-- NOT SUPPORTED !!!
+SELECT ?
+```
+
 ## DDL
 
 DDL, aka Data Definition Language, is an SQL subset that includes **CREATE**, **ALTER**, and **DROP** statements. It uses to define database structure. Also, can include DML statements with extension's commands like **create\_hypertable\(\)** from [**TimescaleDB**](https://docs.timescale.com/latest/api#create_hypertable). All supported extensions you can find in the [**extensions list**](extensions.md)**.**  
