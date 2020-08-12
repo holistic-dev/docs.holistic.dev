@@ -548,7 +548,7 @@ PostgreSQL's syntax includes all standard SQL syntax, so, quite possibly, you ca
 
 **DDL can contain** multiple files. Each of them can include a lot of DDL statements. All unknown or syntactically incorrect statements will be ignored.
 
-**DML can contain** only one DML statement. All other statements will be ignored. DML can contain one of the following parameter syntaxes:
+**DML** can contain **only one** DML **statement**. All other statements will be ignored. DML can contain one of the following parameter syntaxes:
 
 ```sql
 -- SUPPORTED:
