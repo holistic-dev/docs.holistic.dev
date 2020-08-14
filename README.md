@@ -989,6 +989,14 @@ The **holistic.dev API** can process whole pg\_stat\_statements snapshot at one 
 Exporting the pg\_stat\_statements content is the most comfortable, most flexible, and secure way to organize the automatic export of SQL-queries from Postgresql. This extension is easy to configure for both on-premise installations and cloud providers: [AWS](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/CHAP_PostgreSQL.html), [GCP](https://cloud.google.com/sql/docs/postgres/extensions#miscellaneous-extensions), [AZURE](https://docs.microsoft.com/en-in/azure/postgresql/concepts-extensions#pg_stat_statements), [ALIBABA CLOUD](https://www.alibabacloud.com/help/doc-detail/52953.htm), [DIGITAL OCEAN](https://www.digitalocean.com/docs/databases/postgresql/resources/supported-extensions/), [YANDEX CLOUD](https://cloud.yandex.com/docs/managed-postgresql/operations/cluster-extensions#postgresql), and others.
 {% endhint %}
 
+{% hint style="danger" %}
+**pg\_stat\_statements** is disabled by default. You should execute the following command to activate it:
+
+```
+CREATE EXTENSION IF NOT EXISTS pg_stat_statements;
+```
+{% endhint %}
+
 {% hint style="success" %}
 **Privacy**
 
