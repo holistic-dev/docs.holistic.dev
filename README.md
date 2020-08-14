@@ -566,7 +566,7 @@ Parameter as question mark not supported!
 SELECT ?
 ```
 
-## DDL
+## Database schema \(DDL\)
 
 DDL, aka Data Definition Language, is an SQL subset that includes **CREATE**, **ALTER**, and **DROP** statements. It uses to define database structure. Also, can include DML statements with extension's commands like **create\_hypertable\(\)** from [**TimescaleDB**](https://docs.timescale.com/latest/api#create_hypertable). All supported extensions you can find in the [**extensions list**](extensions.md)**.**  
 Knowledge about database structure is the critical requirement for SQL-queries static analysis. We require to upload the database structure described in DDL syntax before process any DML queries.
@@ -797,7 +797,7 @@ curl \
 {% endtab %}
 {% endtabs %}
 
-## DML
+## SQL query \(DML\)
 
 DML, aka Data Manipulation Language, is an SQL subset that includes **SELECT**, **INSERT**, **UPDATE**, and **DELETE** statements.
 
