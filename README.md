@@ -716,9 +716,9 @@ We store the history of all schema changes for future features.
 
 ### Get DDL source
 
-{% api-method method="get" host="https://api.holistic.dev/api/v1/" path="ddl/:uuid" %}
+{% api-method method="get" host="https://api.holistic.dev/api/v1/" path="ddl/:uuid/source" %}
 {% api-method-summary %}
-ddl
+ddl/:uuid/source
 {% endapi-method-summary %}
 
 {% api-method-description %}
@@ -910,9 +910,9 @@ We store the history of all schema changes for future features.
 
 ### Get DML source
 
-{% api-method method="get" host="https://api.holistic.dev/api/v1/" path="dml/:uuid" %}
+{% api-method method="get" host="https://api.holistic.dev/api/v1/" path="dml/:uuid/source" %}
 {% api-method-summary %}
-dml
+dml/:uuid/source
 {% endapi-method-summary %}
 
 {% api-method-description %}
