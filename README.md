@@ -714,6 +714,84 @@ All files of the previous version will be replaced, even if their number does no
 We store the history of all schema changes for future features.
 {% endhint %}
 
+### Patch DDL
+
+{% api-method method="patch" host="https://api.holistic.dev/api/v1/" path="ddl" %}
+{% api-method-summary %}
+ddl
+{% endapi-method-summary %}
+
+{% api-method-description %}
+Patch existing ddl with new DDL commands
+{% endapi-method-description %}
+
+{% api-method-spec %}
+{% api-method-request %}
+{% api-method-headers %}
+{% api-method-parameter name="x-api-key" type="string" required=true %}
+your api key
+{% endapi-method-parameter %}
+{% endapi-method-headers %}
+
+{% api-method-body-parameters %}
+{% api-method-parameter name="project.name" type="string" required=true %}
+project name \(case insensitive\)
+{% endapi-method-parameter %}
+
+{% api-method-parameter name="ddl.version" type="string" required=true %}
+any string version for history navigate \(case insensitive, can be null\)
+{% endapi-method-parameter %}
+
+{% api-method-parameter name="source" type="string" required=true %}
+DDL source code  
+can be base64 encoded or not
+{% endapi-method-parameter %}
+{% endapi-method-body-parameters %}
+{% endapi-method-request %}
+
+{% api-method-response %}
+{% api-method-response-example httpCode=200 %}
+{% api-method-response-example-description %}
+**ddl.uuid** - unique ddl identifier
+{% endapi-method-response-example-description %}
+
+```javascript
+{
+  "status": "OK",
+  "data": {
+    "ddl": {
+      "uuid": "00000000-0000-0000-0000-000000000000"
+    }
+  }
+}
+```
+{% endapi-method-response-example %}
+{% endapi-method-response %}
+{% endapi-method-spec %}
+{% endapi-method %}
+
+**Example:**
+
+{% tabs %}
+{% tab title="JSON" %}
+```javascript
+{
+    "project": {
+        "name": "default"
+    },
+    "ddl": {
+        "version": null
+    },
+    "source": "CREATE INDEX ON aircrafts_data (aircraft_code)"
+}
+```
+{% endtab %}
+{% endtabs %}
+
+{% hint style="warning" %}
+Patch existing DDL with new DDL commands. This source will be attached at the end of the existing DDL in a separate file. DDL and ALL project DMLs will be re-parsed after this.
+{% endhint %}
+
 ### Get DDL source
 
 {% api-method method="get" host="https://api.holistic.dev/api/v1/" path="ddl/:uuid/source" %}
@@ -792,7 +870,147 @@ HOLISTICDEV_API_KEY="<your-api-key>" HOLISTICDEV_DDL_UUID="<ddl-uuid>"; \
 curl \
   --header "x-api-key: $HOLISTICDEV_API_KEY" \
   --header "Content-Type: application/json" \
-  --request GET "https://api.holistic.dev/api/v1/ddl/$HOLISTICDEV_DDL_UUID"
+  --request GET "https://api.holistic.dev/api/v1/ddl/$HOLISTICDEV_DDL_UUID/source/"
+```
+{% endtab %}
+{% endtabs %}
+
+### **Get DDL abstract syntax tree**
+
+{% api-method method="get" host="https://api.holistic.dev/api/v1/" path="ddl/:uuid/ast" %}
+{% api-method-summary %}
+ddl/:uuid/ast
+{% endapi-method-summary %}
+
+{% api-method-description %}
+Get DDL abstract syntax tree \(AST\) by DDL uuid
+{% endapi-method-description %}
+
+{% api-method-spec %}
+{% api-method-request %}
+{% api-method-path-parameters %}
+{% api-method-parameter name="uuid" type="string" required=true %}
+ddl uuid
+{% endapi-method-parameter %}
+{% endapi-method-path-parameters %}
+
+{% api-method-headers %}
+{% api-method-parameter name="x-api-key" type="string" required=true %}
+your api key
+{% endapi-method-parameter %}
+{% endapi-method-headers %}
+{% endapi-method-request %}
+
+{% api-method-response %}
+{% api-method-response-example httpCode=200 %}
+{% api-method-response-example-description %}
+
+{% endapi-method-response-example-description %}
+
+```javascript
+{
+    "data": {
+        "ddl": {
+            "ast": [<abstract syntax tree>],
+        },
+    },
+    "status": "OK"
+}
+```
+{% endapi-method-response-example %}
+{% endapi-method-response %}
+{% endapi-method-spec %}
+{% endapi-method %}
+
+#### Example:
+
+{% tabs %}
+{% tab title="Bash" %}
+```bash
+HOLISTICDEV_API_KEY="<your-api-key>" HOLISTICDEV_DDL_UUID="<ddl-uuid>"; \
+curl \
+  --header "x-api-key: $HOLISTICDEV_API_KEY" \
+  --header "Content-Type: application/json" \
+  --request GET "https://api.holistic.dev/api/v1/ddl/$HOLISTICDEV_DDL_UUID/ast/"
+```
+{% endtab %}
+{% endtabs %}
+
+### Get DDL compiled object
+
+{% api-method method="get" host="https://api.holistic.dev/api/v1/" path="ddl/:uuid/object" %}
+{% api-method-summary %}
+ddl/:uuid/object
+{% endapi-method-summary %}
+
+{% api-method-description %}
+Get DDL compiled object by DDL uuid
+{% endapi-method-description %}
+
+{% api-method-spec %}
+{% api-method-request %}
+{% api-method-path-parameters %}
+{% api-method-parameter name="uuid" type="string" required=true %}
+dml uuid
+{% endapi-method-parameter %}
+{% endapi-method-path-parameters %}
+
+{% api-method-headers %}
+{% api-method-parameter name="x-api-key" type="string" required=true %}
+your api key
+{% endapi-method-parameter %}
+{% endapi-method-headers %}
+
+{% api-method-query-parameters %}
+{% api-method-parameter name="" type="string" required=false %}
+**true** for YES or any another value for NO
+{% endapi-method-parameter %}
+
+{% api-method-parameter name="include-partitions" type="string" required=false %}
+**true** for YES or any another value for NO
+{% endapi-method-parameter %}
+{% endapi-method-query-parameters %}
+{% endapi-method-request %}
+
+{% api-method-response %}
+{% api-method-response-example httpCode=200 %}
+{% api-method-response-example-description %}
+
+{% endapi-method-response-example-description %}
+
+```javascript
+{
+    "data": {
+        "ddl": {
+            "object": {
+                "types": [<user defined types>],
+                "functions": [<user defined functions>],
+                "operators": [<user defined operators>],
+                "sequences": [<sequences>],
+                "schemas": [<non-default schemas>],
+                "extensions": [<extensions>],
+                "relations": [<relations>]
+            },
+        },
+    },
+    "status": "OK"
+}
+```
+{% endapi-method-response-example %}
+{% endapi-method-response %}
+{% endapi-method-spec %}
+{% endapi-method %}
+
+#### Example:
+
+{% tabs %}
+{% tab title="Bash" %}
+```bash
+HOLISTICDEV_API_KEY="<your-api-key>" HOLISTICDEV_DDL_UUID="<ddl-uuid>"; \
+curl \
+  --header "x-api-key: $HOLISTICDEV_API_KEY" \
+  --header "Content-Type: application/json" \
+  --request GET "https://api.holistic.dev/api/v1/ddl/$HOLISTICDEV_DDL_UUID/object/"
 ```
 {% endtab %}
 {% endtabs %}
@@ -974,19 +1192,141 @@ HOLISTICDEV_API_KEY="<your-api-key>" HOLISTICDEV_DML_UUID="<dml-uuid>"; \
 curl \
   --header "x-api-key: $HOLISTICDEV_API_KEY" \
   --header "Content-Type: application/json" \
-  --request GET "https://api.holistic.dev/api/v1/dml/$HOLISTICDEV_DML_UUID"
+  --request GET "https://api.holistic.dev/api/v1/dml/$HOLISTICDEV_DML_UUID/source/"
 ```
 {% endtab %}
 {% endtabs %}
 
-## pg\_stat\_statements
+### **Get DML abstract syntax tree**
 
-The [**pg\_stat\_statements**](https://www.postgresql.org/docs/current/pgstatstatements.html) module provides a means for tracking execution statistics of all SQL statements executed by a server.
+{% api-method method="get" host="https://api.holistic.dev/api/v1/" path="dml/:uuid/ast" %}
+{% api-method-summary %}
+dml/:uuid/ast
+{% endapi-method-summary %}
 
-The **holistic.dev API** can process whole pg\_stat\_statements snapshot at one request.
+{% api-method-description %}
+Get DML abstract syntax tree \(AST\) by DML uuid
+{% endapi-method-description %}
+
+{% api-method-spec %}
+{% api-method-request %}
+{% api-method-path-parameters %}
+{% api-method-parameter name="uuid" type="string" required=true %}
+dml uuid
+{% endapi-method-parameter %}
+{% endapi-method-path-parameters %}
+
+{% api-method-headers %}
+{% api-method-parameter name="x-api-key" type="string" required=true %}
+your api key
+{% endapi-method-parameter %}
+{% endapi-method-headers %}
+{% endapi-method-request %}
+
+{% api-method-response %}
+{% api-method-response-example httpCode=200 %}
+{% api-method-response-example-description %}
+
+{% endapi-method-response-example-description %}
+
+```javascript
+{
+    "data": {
+        "dml": {
+            "ast": [<abstract syntax tree>],
+        },
+    },
+    "status": "OK"
+}
+```
+{% endapi-method-response-example %}
+{% endapi-method-response %}
+{% endapi-method-spec %}
+{% endapi-method %}
+
+#### Example:
+
+{% tabs %}
+{% tab title="Bash" %}
+```bash
+HOLISTICDEV_API_KEY="<your-api-key>" HOLISTICDEV_DML_UUID="<dml-uuid>"; \
+curl \
+  --header "x-api-key: $HOLISTICDEV_API_KEY" \
+  --header "Content-Type: application/json" \
+  --request GET "https://api.holistic.dev/api/v1/dml/$HOLISTICDEV_DML_UUID/ast/"
+```
+{% endtab %}
+{% endtabs %}
+
+### Get DML compiled object
+
+{% api-method method="get" host="https://api.holistic.dev/api/v1/" path="dml/:uuid/object" %}
+{% api-method-summary %}
+dml/:uuid/object
+{% endapi-method-summary %}
+
+{% api-method-description %}
+Get DML compiled object by DML uuid
+{% endapi-method-description %}
+
+{% api-method-spec %}
+{% api-method-request %}
+{% api-method-path-parameters %}
+{% api-method-parameter name="uuid" type="string" required=true %}
+dml uuid
+{% endapi-method-parameter %}
+{% endapi-method-path-parameters %}
+
+{% api-method-headers %}
+{% api-method-parameter name="x-api-key" type="string" required=true %}
+your api key
+{% endapi-method-parameter %}
+{% endapi-method-headers %}
+{% endapi-method-request %}
+
+{% api-method-response %}
+{% api-method-response-example httpCode=200 %}
+{% api-method-response-example-description %}
+
+{% endapi-method-response-example-description %}
+
+```javascript
+{
+    "data": {
+        "dml": {
+            "object": [<compiled object>],
+        },
+    },
+    "status": "OK"
+}
+```
+{% endapi-method-response-example %}
+{% endapi-method-response %}
+{% endapi-method-spec %}
+{% endapi-method %}
+
+#### Example:
+
+{% tabs %}
+{% tab title="Bash" %}
+```bash
+HOLISTICDEV_API_KEY="<your-api-key>" HOLISTICDEV_DML_UUID="<dml-uuid>"; \
+curl \
+  --header "x-api-key: $HOLISTICDEV_API_KEY" \
+  --header "Content-Type: application/json" \
+  --request GET "https://api.holistic.dev/api/v1/dml/$HOLISTICDEV_DML_UUID/object/"
+```
+{% endtab %}
+{% endtabs %}
+
+## pg\_stat\_statements and pg\_stat\_monitor <a id="pg_stat_statements"></a>
+
+The [**pg\_stat\_statements**](https://www.postgresql.org/docs/current/pgstatstatements.html) **and pg\_stat\_monitor** modules provides a means for tracking execution statistics of all SQL statements executed by a server.
+
+The **holistic.dev API** can process whole pg\_stat\_statements/pg\_stat\_monitor snapshot at one request.
 
 {% hint style="info" %}
-Exporting the pg\_stat\_statements content is the most comfortable, most flexible, and secure way to organize the automatic export of SQL-queries from Postgresql. This extension is easy to configure for both on-premise installations and cloud providers: [AWS](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/CHAP_PostgreSQL.html), [GCP](https://cloud.google.com/sql/docs/postgres/extensions#miscellaneous-extensions), [AZURE](https://docs.microsoft.com/en-in/azure/postgresql/concepts-extensions#pg_stat_statements), [ALIBABA CLOUD](https://www.alibabacloud.com/help/doc-detail/52953.htm), [DIGITAL OCEAN](https://www.digitalocean.com/docs/databases/postgresql/resources/supported-extensions/), [YANDEX CLOUD](https://cloud.yandex.com/docs/managed-postgresql/operations/cluster-extensions#postgresql), and others.
+Exporting the pg\_stat\_statements content is the most comfortable, most flexible, and secure way to organize the automatic export of SQL-queries from Postgresql. This extension is easy to configure for both on-premise installations and cloud providers: [AWS](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/CHAP_PostgreSQL.html), [GCP](https://cloud.google.com/sql/docs/postgres/extensions#miscellaneous-extensions), [AZURE](https://docs.microsoft.com/en-in/azure/postgresql/concepts-extensions#pg_stat_statements), [ALIBABA CLOUD](https://www.alibabacloud.com/help/doc-detail/52953.htm), [DIGITAL OCEAN](https://www.digitalocean.com/docs/databases/postgresql/resources/supported-extensions/), [YANDEX CLOUD](https://cloud.yandex.com/docs/managed-postgresql/operations/cluster-extensions#postgresql), [SBER CLOUD](https://support.hc.sbercloud.ru/usermanual/rds/en-us_topic_0077893062.html) and others.
 {% endhint %}
 
 {% hint style="danger" %}
@@ -1017,7 +1357,7 @@ pg\_stat\_statements
 {% endapi-method-summary %}
 
 {% api-method-description %}
-Upload **pg\_stat\_statements** snapshot
+Upload **pg\_stat\_statements** or **pg\_stat\_monitor** snapshot
 {% endapi-method-description %}
 
 {% api-method-spec %}
