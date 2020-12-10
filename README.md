@@ -156,7 +156,7 @@ project
 {% endapi-method-summary %}
 
 {% api-method-description %}
-Create new project
+Rename project
 {% endapi-method-description %}
 
 {% api-method-spec %}
