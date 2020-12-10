@@ -1321,33 +1321,37 @@ curl \
 
 ## pg\_stat\_statements and pg\_stat\_monitor <a id="pg_stat_statements"></a>
 
-The [**pg\_stat\_statements**](https://www.postgresql.org/docs/current/pgstatstatements.html) **and pg\_stat\_monitor** modules provides a means for tracking execution statistics of all SQL statements executed by a server.
+The [**pg\_stat\_statements**](https://www.postgresql.org/docs/current/pgstatstatements.html) **and** [**pg\_stat\_monitor**](https://github.com/percona/pg_stat_monitor/) modules provides a means for tracking execution statistics of all SQL statements executed by a server.
 
 The **holistic.dev API** can process whole pg\_stat\_statements/pg\_stat\_monitor snapshot at one request.
 
 {% hint style="info" %}
-Exporting the pg\_stat\_statements content is the most comfortable, most flexible, and secure way to organize the automatic export of SQL-queries from Postgresql. This extension is easy to configure for both on-premise installations and cloud providers: [AWS](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/CHAP_PostgreSQL.html), [GCP](https://cloud.google.com/sql/docs/postgres/extensions#miscellaneous-extensions), [AZURE](https://docs.microsoft.com/en-in/azure/postgresql/concepts-extensions#pg_stat_statements), [ALIBABA CLOUD](https://www.alibabacloud.com/help/doc-detail/52953.htm), [DIGITAL OCEAN](https://www.digitalocean.com/docs/databases/postgresql/resources/supported-extensions/), [YANDEX CLOUD](https://cloud.yandex.com/docs/managed-postgresql/operations/cluster-extensions#postgresql), [SBER CLOUD](https://support.hc.sbercloud.ru/usermanual/rds/en-us_topic_0077893062.html) and others.
+Exporting the pg\_stat\_statements/pg\_stat\_monitor content is the most comfortable, most flexible, and secure way to organize the automatic export of SQL-queries from Postgresql. This extension is easy to configure for both on-premise installations and cloud providers: [AWS](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/CHAP_PostgreSQL.html), [GCP](https://cloud.google.com/sql/docs/postgres/extensions#miscellaneous-extensions), [AZURE](https://docs.microsoft.com/en-in/azure/postgresql/concepts-extensions#pg_stat_statements), [ALIBABA CLOUD](https://www.alibabacloud.com/help/doc-detail/52953.htm), [DIGITAL OCEAN](https://www.digitalocean.com/docs/databases/postgresql/resources/supported-extensions/), [YANDEX CLOUD](https://cloud.yandex.com/docs/managed-postgresql/operations/cluster-extensions#postgresql), [SBER CLOUD](https://support.hc.sbercloud.ru/usermanual/rds/en-us_topic_0077893062.html) and others.
 {% endhint %}
 
 {% hint style="danger" %}
-**pg\_stat\_statements** is disabled by default. You should execute the following command to activate it:
+**pg\_stat\_statements** and **pg\_stat\_monitor** can be disabled by default. You should execute the following command to activate it:
 
-```
+```sql
+-- pg_stat_statements
 CREATE EXTENSION IF NOT EXISTS pg_stat_statements;
+
+-- pg_stat_monitor
+CREATE EXTENSION pg_stat_monitor;
 ```
 {% endhint %}
 
 {% hint style="success" %}
 **Privacy**
 
-**pg\_stat\_statements** extension normalizes query entries. Normalization is a process whereby similar queries, typically differing only in their constants \(though the exact rules are somewhat more subtle than that\) are recognized as equivalent, and are tracked as a single entry.  This is particularly useful for non-prepared queries.  
+**pg\_stat\_statements** and **pg\_stat\_monitor** extensions normalizes query entries. Normalization is a process whereby similar queries, typically differing only in their constants \(though the exact rules are somewhat more subtle than that\) are recognized as equivalent, and are tracked as a single entry.  This is particularly useful for non-prepared queries.  
   
 The normalization process intercepts constants in SQL statements run by users and replaces them with a placeholder \(identified as a dollar mark with number\).  
   
 For this reason, all data values that were used in SQL-statement will be blacked out and will not be visible at holistic.dev  
   
-But **normalization** has another side.
-
+But **normalization** has another side.  
+  
 When normalizing the parameters of functions and expressions, it is quite often impossible to define the type of result unambiguously. For example, the addition operator has 42 types of its arguments, and the normalized query**`SELECT`**`$1 + $2` can return 20 different response types. Such ambiguity negatively affects the analyzer's accuracy. The result of this will be less accurate analysis results - some rules will not be applied.
 {% endhint %}
 
