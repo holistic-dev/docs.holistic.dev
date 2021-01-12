@@ -12,5 +12,8 @@ description: >-
 [https://github.com/holistic-dev/faas-cloud.yandex-pg](https://github.com/holistic-dev/faas-cloud.yandex-pg)
 
 **SberCloud**  
-[https://github.com/holistic-dev/faas-sbercloud-pg](https://github.com/holistic-dev/faas-sbercloud-pg)
+[https://github.com/holistic-dev/faas-sbercloud-pg](https://github.com/holistic-dev/faas-sbercloud-pg)  
+  
+**Selectel**  
+[https://github.com/holistic-dev/faas-selectel-pg](https://github.com/holistic-dev/faas-selectel-pg)
 
