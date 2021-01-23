@@ -714,6 +714,12 @@ All files of the previous version will be replaced, even if their number does no
 We store the history of all schema changes for future features.
 {% endhint %}
 
+Also, you can copy bash script with credentials from project card from project list inside [client area](https://app.holistic.dev/en/projects):
+
+![Project card -&amp;gt; &quot;Copy info&quot; button](.gitbook/assets/image%20%281%29.png)
+
+
+
 ### Patch DDL
 
 {% api-method method="patch" host="https://api.holistic.dev/api/v1/" path="ddl" %}
@@ -1125,6 +1131,10 @@ base64 argument -w0 need to prevent formatting result at Linux-based os
 {% hint style="info" %}
 We store the history of all schema changes for future features.
 {% endhint %}
+
+ Also, you can copy bash script with credentials from project card from project list inside [client area](https://app.holistic.dev/en/projects):
+
+![Project card -&amp;gt; &quot;Copy info&quot; button](.gitbook/assets/image%20%281%29.png)
 
 ### Get DML source
 
